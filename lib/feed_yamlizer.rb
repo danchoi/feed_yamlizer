@@ -9,6 +9,8 @@ require 'feed_yamlizer/feed_listener'
 require 'feed_yamlizer/feed_parser'
 require 'feed_yamlizer/html_listener'
 require 'feed_yamlizer/html_stripper'
+require 'nokogiri'
+require 'feed_yamlizer/textifier'
 require 'fileutils'
 require 'yaml'
 
@@ -73,7 +75,10 @@ class FeedYamlizer
     content = (item[:content] || item[:summary] || "").gsub(/^\s*/, '').strip
     @result[:items][-1][:content] = {:html => content}
     # TODO check if HTML or plain text!
-    @result[:items][-1][:content][:simplified] = HtmlStripper.new(content, @orig_encoding).output
+    simplified = HtmlStripper.new(content, @orig_encoding).output
+    textified = Textifier.new(simplified).output 
+    @result[:items][-1][:content][:simplified] = simplified
+    @result[:items][-1][:content][:text] = textified
   end
 
   def self.run

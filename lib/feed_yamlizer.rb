@@ -5,8 +5,8 @@
 
 require 'rexml/streamlistener'
 require 'rexml/document'
-require 'feed_yamlier/feed_listener'
-require 'feed_yamlier/feed_parser'
+require 'feed_yamlizer/feed_listener'
+require 'feed_yamlizer/feed_parser'
 require 'fileutils'
 require 'yaml'
 

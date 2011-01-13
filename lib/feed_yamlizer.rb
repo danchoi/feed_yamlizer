@@ -16,7 +16,7 @@ class FeedYamlizer
   # Takes feed result as hash. Generate this with FeedParser
   def initialize(feed)
     @feed = feed
-    @result = {:items => []}
+    @result = {:meta => {}, :items => []}
   end
 
   def result
@@ -69,13 +69,13 @@ class FeedYamlizer
 
   def add_raw_content(item, index)
     content = item[:content] || item[:summary] || "" 
-    @result[:items][-1][:content] = content.strip + "\n"
+    @result[:items][-1][:content] = {:html => content.gsub(/^\s*/, '').strip}
   end
 
   def self.run
     feed_xml = STDIN.read
     parsed_data = FeedYamlizer::FeedParser.new(feed_xml).result
-    result = FeedYamlizer::FeedYamlizer.new(parsed_data).result
+    result = FeedYamlizer.new(parsed_data).result
     STDOUT.puts result.to_yaml
   end
 

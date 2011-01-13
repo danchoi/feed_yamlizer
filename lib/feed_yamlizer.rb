@@ -73,12 +73,18 @@ class FeedYamlizer
   end
 
   def self.run
+    check_for_tidy
     feed_xml = STDIN.read
     parsed_data = FeedYamlizer::FeedParser.new(feed_xml).result
     result = FeedYamlizer.new(parsed_data).result
     STDOUT.puts result.to_yaml
   end
 
+  def self.check_for_tidy
+    if `which tidy` == ''
+      abort "Please install tidy"
+    end
+  end
 end
 
 

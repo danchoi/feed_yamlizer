@@ -7,6 +7,8 @@ require 'rexml/streamlistener'
 require 'rexml/document'
 require 'feed_yamlizer/feed_listener'
 require 'feed_yamlizer/feed_parser'
+require 'feed_yamlizer/html_listener'
+require 'feed_yamlizer/html_textifier'
 require 'fileutils'
 require 'yaml'
 
@@ -68,8 +70,10 @@ class FeedYamlizer
   end
 
   def add_raw_content(item, index)
-    content = item[:content] || item[:summary] || "" 
-    @result[:items][-1][:content] = {:html => content.gsub(/^\s*/, '').strip}
+    content = (item[:content] || item[:summary] || "").gsub(/^\s*/, '').strip
+    @result[:items][-1][:content] = {:html => content}
+    # TODO check if HTML or plain text!
+    @result[:items][-1][:content][:text] = HtmlTextifier.new(content, @orig_encoding).output
   end
 
   def self.run

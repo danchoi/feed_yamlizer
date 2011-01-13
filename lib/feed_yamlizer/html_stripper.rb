@@ -11,7 +11,7 @@ require 'open3'
 # http://tidy.sourceforge.net/docs/Overview.html
 
 class FeedYamlizer
-  class HtmlTextifier
+  class HtmlStripper
     include FileUtils::Verbose
 
     # Takes feed data as hash. Generate this with FeedParser

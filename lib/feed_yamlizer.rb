@@ -8,7 +8,7 @@ require 'rexml/document'
 require 'feed_yamlizer/feed_listener'
 require 'feed_yamlizer/feed_parser'
 require 'feed_yamlizer/html_listener'
-require 'feed_yamlizer/html_textifier'
+require 'feed_yamlizer/html_stripper'
 require 'fileutils'
 require 'yaml'
 
@@ -73,7 +73,7 @@ class FeedYamlizer
     content = (item[:content] || item[:summary] || "").gsub(/^\s*/, '').strip
     @result[:items][-1][:content] = {:html => content}
     # TODO check if HTML or plain text!
-    @result[:items][-1][:content][:text] = HtmlTextifier.new(content, @orig_encoding).output
+    @result[:items][-1][:content][:simplified] = HtmlStripper.new(content, @orig_encoding).output
   end
 
   def self.run

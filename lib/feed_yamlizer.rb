@@ -71,12 +71,14 @@ class FeedYamlizer
     content = item[:content] || item[:summary] || "" 
     @result[:items][-1][:content] = content.strip + "\n"
   end
+
+  def self.run
+    feed_xml = STDIN.read
+    parsed_data = FeedYamlizer::FeedParser.new(feed_xml).result
+    result = FeedYamlizer::FeedYamlizer.new(parsed_data).result
+    STDOUT.puts result.to_yaml
+  end
+
 end
 
-if __FILE__ == $0
-  feed_xml = STDIN.read
-  parsed_data = FeedYamlizer::FeedParser.new(feed_xml).result
-  result = FeedYamlizer::FeedYamlizer.new(parsed_data).result
-  STDOUT.puts result.to_yaml
-end
 

@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'feed_yamlizer'
+rescue LoadError
+  require 'rubygems'
+  require 'feed_yamlizer'
+end
+
+FeedYamlizer.run
+

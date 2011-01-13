@@ -17,7 +17,6 @@ require 'yaml'
 class FeedYamlizer 
   include FileUtils::Verbose
 
-  # Takes feed result as hash. Generate this with FeedParser
   def initialize(feed)
     @feed = feed
     @result = {:meta => {}, :items => []}

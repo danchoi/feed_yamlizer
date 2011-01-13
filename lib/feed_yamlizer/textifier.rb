@@ -5,10 +5,11 @@ class FeedYamlizer
       @doc = Nokogiri::HTML.parse(html)
     end
 
+    # TODO beef this up with real effects
+
     def output
       @doc.inner_text
     end
-
   end
 end
 

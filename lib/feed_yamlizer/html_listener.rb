@@ -21,6 +21,7 @@ class FeedYamlizer
         select {|line| line != ""}.compact.join("\n\n")
       digits = @links.size.to_s.size 
 
+      x = format(x)
       x + "\n\n" + @links.map {|x| 
         gutter = x[:index].to_s.rjust(digits)
         if x[:content] && x[:content].strip.length > 0
@@ -106,5 +107,14 @@ class FeedYamlizer
     def path
       @nested_tags.join('/')
     end
+
+    def format(x)
+      IO.popen("fmt", "r+") do |pipe| 
+        pipe.puts x
+        pipe.close_write
+        pipe.read
+      end
+    end
+
   end
 end

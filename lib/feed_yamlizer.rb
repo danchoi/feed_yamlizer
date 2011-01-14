@@ -59,7 +59,7 @@ class FeedYamlizer
     # TODO check if HTML or plain text!
     simplified = HtmlCleaner.new(content).output
     textified = Textifier.new(simplified).output 
-    @result[:items][-1][:content][:simplified] = simplified
+    #@result[:items][-1][:content][:simplified] = simplified
     @result[:items][-1][:content][:text] = textified
   end
 

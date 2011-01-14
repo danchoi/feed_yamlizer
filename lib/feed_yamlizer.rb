@@ -8,11 +8,12 @@ require 'rexml/document'
 require 'feed_yamlizer/feed_listener'
 require 'feed_yamlizer/feed_parser'
 require 'feed_yamlizer/html_listener'
-require 'feed_yamlizer/html_stripper'
+require 'feed_yamlizer/html_cleaner'
 require 'nokogiri'
 require 'feed_yamlizer/textifier'
 require 'fileutils'
 require 'yaml'
+require 'htmlentities'
 
 class FeedYamlizer 
   include FileUtils::Verbose
@@ -25,28 +26,15 @@ class FeedYamlizer
   def result
     add_feed_metaresult
     add_items
-    #encode(result)
-    # REXML encodes everything to UTF-8
     @result
   end
 
-  # encoding method
-  def encode(string)
-    return unless string
-    return string unless @orig_encoding
-    if @orig_encoding && @orig_encoding.upcase == "UTF-8"
-      return string 
-    end
-    string.force_encoding(@orig_encoding)
-    string.encode!("UTF-8", undef: :replace, invalid: :replace)
-    string
-  end
-
   def add_feed_metaresult
-    fields = [:title, :link, :orig_encoding]
-    @orig_encoding = @feed[:orig_encoding]
+    fields = [:title, :link, :xml_encoding]
+    @xml_encoding = @feed[:xml_encoding]
     @result[:meta] = fields.reduce({}) {|memo, field| 
-      memo[field] = encode(@feed[field]); memo
+      memo[field] = @feed[field]
+      memo
     }
   end
 
@@ -60,11 +48,7 @@ class FeedYamlizer
   def add_item_metaresult(item, index)
     fields = [:title, :author, :guid, :pub_date, :link]
     metaresult = fields.reduce({}) {|memo, field| 
-      memo[field] = if field == :pub_date 
-                      item[field]
-                    else
-                      encode(item[field])
-                    end
+      memo[field] = item[field]
       memo
     }
     @result[:items] << metaresult
@@ -74,15 +58,14 @@ class FeedYamlizer
     content = (item[:content] || item[:summary] || "").gsub(/^\s*/, '').strip
     @result[:items][-1][:content] = {:html => content}
     # TODO check if HTML or plain text!
-    simplified = HtmlStripper.new(content, @orig_encoding).output
+    simplified = HtmlCleaner.new(content).output
     textified = Textifier.new(simplified).output 
     @result[:items][-1][:content][:simplified] = simplified
     @result[:items][-1][:content][:text] = textified
   end
 
-  def self.run
+  def self.run(feed_xml)
     check_for_tidy
-    feed_xml = STDIN.read
     parsed_data = FeedYamlizer::FeedParser.new(feed_xml).result
     result = FeedYamlizer.new(parsed_data).result
     STDOUT.puts result.to_yaml

@@ -9,10 +9,11 @@ require 'yaml'
 
 class FeedYamlizer
   class FeedParser
-    def initialize(xml)
+    def initialize(xml, encoding=nil)
       @xml = xml
       @listener = FeedListener.new
       REXML::Document.parse_stream(@xml, @listener)
+    # TODO this is a hack, do it right
     rescue REXML::ParseException
       #puts "REXML::ParseException; converting xml to ascii"
       @xml = Iconv.conv("US-ASCII//TRANSLIT//IGNORE", "ISO-8859-1", @xml)
@@ -25,11 +26,3 @@ class FeedYamlizer
   end
 end
 
-if __FILE__ == $0
-  feeds = ARGV
-  feeds.each do |feed|
-    xml = File.read feed
-    f = FeedParser.new(xml)
-    f.result.to_yaml
-  end
-end

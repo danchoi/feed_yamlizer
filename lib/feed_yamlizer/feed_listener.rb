@@ -83,9 +83,9 @@ class FeedYamlizer
 
     def xmldecl(decl, encoding, extra)
       if encoding 
-        @x[:orig_encoding] = encoding.downcase
+        @x[:xml_encoding] = encoding.downcase
       else
-        @x[:orig_encoding] = "UTF-8"
+        @x[:xml_encoding] = "UTF-8"
       end
     end
 

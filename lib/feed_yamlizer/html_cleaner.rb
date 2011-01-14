@@ -11,13 +11,14 @@ require 'open3'
 # http://tidy.sourceforge.net/docs/Overview.html
 
 class FeedYamlizer
-  class HtmlStripper
+  class HtmlCleaner
     include FileUtils::Verbose
 
     # Takes feed data as hash. Generate this with FeedParser
-    def initialize(html, orig_encoding)
-      @orig_encoding = orig_encoding
-      @xml = tidy(pre_cleanup(html))
+    def initialize(html)
+      @html = html
+      decode_entities
+      @xml = self.class.tidy(@html)
       @result = parse.gsub(/<http[^>]+>/, "")
     end
 
@@ -31,12 +32,12 @@ class FeedYamlizer
       @listener.result + "\n\n"
     end
 
-    def pre_cleanup(html)
-      html.gsub!("<o:p></o:p>", "")
-      html
+    def decode_entities
+      coder = HTMLEntities.new
+      coder.decode @html
     end
 
-    def self.tidy(html, orig_encoding)
+    def self.tidy(html)
       # assumes input encoding of latin 1
       #output = Open3.popen3("tidy -q -n -wrap 120 -asxml -latin1") do |stdin, stdout, stderr|
       #output = IO.popen("tidy -q -n -wrap 120 -asxml -latin1", "r+") do |pipe|
@@ -55,10 +56,6 @@ class FeedYamlizer
         pipe.read
       end
       output
-    end
-
-    def tidy(html)
-      self.class.tidy html, @orig_encoding
     end
   end
 end

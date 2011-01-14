@@ -11,6 +11,7 @@ class FeedYamlizer
     def initialize
       @nested_tags = []
       @content = [""]
+      @links = []
     end
 
     def result
@@ -18,6 +19,9 @@ class FeedYamlizer
       # not full-proof but good enough for now
       x = @content.map {|line| strip_empty_tags( strip_empty_tags( line ).strip ) }.
         select {|line| line != ""}.compact.join("\n\n")
+      x + "\n\n" + @links.map {|x| 
+        "#{x[:index]}. #{x[:href]}"
+      }.join("\n")
     end
 
     def strip_empty_tags(line)
@@ -28,11 +32,10 @@ class FeedYamlizer
       @nested_tags.push name
       case name 
       when 'a'
-        # effectively strips out all style tags
-        @content[-1] << "<a href='#{attrs['href']}'>"
+        @links << {:href => attrs['href']}
       when 'img'
         if attrs['alt']
-          text = (attrs['alt'].strip == '') ? 'image ' : "image:#{attrs['alt']} "
+          text = (attrs['alt'].strip == '') ? 'image ' : "image:#{attrs['alt'] || attrs["title"]} "
           @content[-1] << text
         end
       when *HEADER_TAGS
@@ -58,7 +61,9 @@ class FeedYamlizer
       @nested_tags.pop
       case name
       when 'a'
-        @content[-1] << "</a>" 
+        @links[-1][:content] = @content[-1] 
+        @links[-1][:index] = @links.size
+        @content[-1] = "#{@content[-1].strip}[#{@links.size}]"
       when *HEADER_TAGS
         @content[-1] << "</#{UNIFORM_HEADER_TAG}>" 
       when 'blockquote'

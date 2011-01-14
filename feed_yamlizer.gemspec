@@ -4,7 +4,7 @@ require "feed_yamlizer/version"
 
 Gem::Specification.new do |s|
   s.name        = "feed_yamlizer"
-  s.version     = Vmail::VERSION
+  s.version     = FeedYamlizer::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Daniel Choi"]
   s.email       = ["dhchoi@gmail.com"]

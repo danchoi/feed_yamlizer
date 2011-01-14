@@ -34,7 +34,17 @@ def tidy(xml)
   output
 end
 
-if STDIN.tty? # assume ARGV.first is a url
+# for testing
+def print_text(res)
+  res[:items].each {|x| 
+    puts '-' * 30
+    puts x[:title]
+    puts
+    puts x[:content][:text]
+  }
+end
+
+res = if STDIN.tty? # assume ARGV.first is a url
   url = ARGV.first
   response = open(url)
   charset = response.charset
@@ -50,4 +60,5 @@ else
   FeedYamlizer.run feed_xml
 end
 
-
+print_text res
+#puts res.to_yaml

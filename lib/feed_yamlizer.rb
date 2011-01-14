@@ -68,7 +68,7 @@ class FeedYamlizer
     check_for_tidy
     parsed_data = FeedYamlizer::FeedParser.new(feed_xml).result
     result = FeedYamlizer.new(parsed_data).result
-    STDOUT.puts result.to_yaml
+    result
   end
 
   def self.check_for_tidy

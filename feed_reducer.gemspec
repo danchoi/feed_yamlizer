@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["dhchoi@gmail.com"]
   s.homepage    = "TODO"
   s.summary     = %q{A feed parser and converter}
-  s.description = %q{Converts feeds to YAML and extracts plain text content}
+  s.description = %q{Converts feeds to YAML and converts entries to plain text}
 
   s.rubyforge_project = "feed_yamlizer"
 

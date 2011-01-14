@@ -60,5 +60,8 @@ else
   FeedYamlizer.run feed_xml
 end
 
-print_text res
-#puts res.to_yaml
+if ENV['TEST'] 
+  print_text res
+else
+  puts res.to_yaml
+end

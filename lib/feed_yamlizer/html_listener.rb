@@ -50,7 +50,7 @@ class FeedYamlizer
       when 'br' #skip
         @content << "<br/>"
       when 'blockquote'
-        @content << "<blockquote>"
+        @content << "[blockquote]"
       when 'ul', 'ol', 'dl'
         @content << "<#{name}>"
       when 'li', 'dt', 'dd'
@@ -74,7 +74,7 @@ class FeedYamlizer
       when *HEADER_TAGS
         @content[-1] << "</#{UNIFORM_HEADER_TAG}>" 
       when 'blockquote'
-        @content << '</blockquote>'
+        @content << '[/blockquote]'
       when 'ul', 'ol', 'dl'
         @content[-1] << "</#{name}>"
       when 'li', 'dt', 'dd'

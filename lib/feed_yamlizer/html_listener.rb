@@ -20,7 +20,11 @@ class FeedYamlizer
       x = @content.map {|line| strip_empty_tags( strip_empty_tags( line ).strip ) }.
         select {|line| line != ""}.compact.join("\n\n")
       x + "\n\n" + @links.map {|x| 
-        "#{x[:index]}. #{x[:href]}"
+        if x[:content] && x[:content].strip.length > 0
+          "#{x[:index]}. #{x[:content].gsub(/[\r\n]+/, ' ').strip}\n   #{x[:href]}"
+        else
+          "#{x[:index]}. #{x[:href]}"
+        end
       }.join("\n")
     end
 
@@ -33,11 +37,10 @@ class FeedYamlizer
       case name 
       when 'a'
         @links << {:href => attrs['href']}
+        @in_link = true
       when 'img'
-        if attrs['alt']
-          text = (attrs['alt'].strip == '') ? 'image ' : "image:#{attrs['alt'] || attrs["title"]} "
-          @content[-1] << text
-        end
+        text = attrs['alt'] || attrs['title']
+        @content[-1] << "img:#{text}"
       when *HEADER_TAGS
         @content << "<#{UNIFORM_HEADER_TAG}>" 
       when 'br' #skip
@@ -61,9 +64,9 @@ class FeedYamlizer
       @nested_tags.pop
       case name
       when 'a'
-        @links[-1][:content] = @content[-1] 
         @links[-1][:index] = @links.size
-        @content[-1] = "#{@content[-1].strip}[#{@links.size}]"
+        @in_link = false
+        @content[-1] << "#{(@links[-1][:content] || '').strip.gsub(/[\r\n]+/, ' ')}[#{@links.size}]"
       when *HEADER_TAGS
         @content[-1] << "</#{UNIFORM_HEADER_TAG}>" 
       when 'blockquote'
@@ -83,6 +86,10 @@ class FeedYamlizer
 
     def text(text)
       return if text =~ /\a\s*\Z/
+      if @in_link 
+        (@links[-1][:content] ||= "") << text
+        return
+      end
 
       # probably slow, but ok for now
       @content[-1] << text

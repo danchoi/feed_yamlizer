@@ -81,6 +81,7 @@ class FeedYamlizer
       end
     end
 
+    # main method
     def run(feed_xml, encoding)
       check_for_tidy
       feed_xml = to_utf feed_xml, encoding

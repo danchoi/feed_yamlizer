@@ -18,12 +18,14 @@ class FeedYamlizer
       # we call strip_empty_tags twice to catch empty tags nested in a tag like <p>
       # not full-proof but good enough for now
       x = @content.map {|line| strip_empty_tags( strip_empty_tags( line ).strip ) }.
-        select {|line| line != ""}.
+        select {|line| line.strip != ""}.
         compact.
         join("\n\n")
+
       digits = @links.size.to_s.size 
 
       x = format(x)
+
       x + "\n\n" + @links.map {|x| 
         gutter = x[:index].to_s.rjust(digits)
         if x[:content] && x[:content].strip.length > 0

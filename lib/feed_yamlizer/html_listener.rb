@@ -19,11 +19,14 @@ class FeedYamlizer
       # not full-proof but good enough for now
       x = @content.map {|line| strip_empty_tags( strip_empty_tags( line ).strip ) }.
         select {|line| line != ""}.compact.join("\n\n")
+      digits = @links.size.to_s.size 
+
       x + "\n\n" + @links.map {|x| 
+        gutter = x[:index].to_s.rjust(digits)
         if x[:content] && x[:content].strip.length > 0
-          "#{x[:index]}. #{x[:content].gsub(/[\r\n]+/, ' ').strip}\n   #{x[:href]}"
+          %Q|#{gutter}. "#{x[:content].gsub(/[\r\n]+/, ' ').strip}"\n#{' ' * (digits + 2)}#{x[:href]}|
         else
-          "#{x[:index]}. #{x[:href]}"
+          "#{gutter}. #{x[:href]}"
         end
       }.join("\n")
     end

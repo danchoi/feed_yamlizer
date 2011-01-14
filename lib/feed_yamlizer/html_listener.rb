@@ -18,7 +18,9 @@ class FeedYamlizer
       # we call strip_empty_tags twice to catch empty tags nested in a tag like <p>
       # not full-proof but good enough for now
       x = @content.map {|line| strip_empty_tags( strip_empty_tags( line ).strip ) }.
-        select {|line| line != ""}.compact.join("\n\n")
+        select {|line| line != ""}.
+        compact.
+        join("\n\n")
       digits = @links.size.to_s.size 
 
       x = format(x)
@@ -49,7 +51,8 @@ class FeedYamlizer
       when *HEADER_TAGS
         @content << "<#{UNIFORM_HEADER_TAG}>" 
       when 'br' #skip
-        @content << "<br/>"
+        #@content << "<br/>"
+        @content << ""
       when 'blockquote'
         @content << "[blockquote]"
       when 'ul', 'ol', 'dl'

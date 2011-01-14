@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Daniel Choi"]
   s.email       = ["dhchoi@gmail.com"]
-  s.homepage    = "TODO"
+  s.homepage    = "https://github.com/danchoi/feed_yamlizer"
   s.summary     = %q{A feed parser and converter}
   s.description = %q{Converts feeds to YAML and converts entries to plain text}
 

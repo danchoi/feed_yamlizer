@@ -20,20 +20,6 @@ def to_utf(x, http_charset, xml_charset)
   x = Iconv.conv("UTF-8//TRANSLIT//IGNORE", original_charset, x)
 end
 
-def tidy(xml)
-  tidy_cmd = "tidy -q -wrap 120 -n -utf8 -asxml 2>/dev/null"
-  tidy_cmd = "tidy -wrap 120 -n -utf8 -asxml "
-  output = IO.popen(tidy_cmd, "r+") do |pipe| 
-    pipe.puts xml
-    pipe.close_write
-    pipe.read
-  end
-  if output.nil? || output.strip == ''
-    abort "tidy has no output!"
-  end
-  output
-end
-
 # for testing
 def print_text(res)
   res[:items].each {|x| 
@@ -51,12 +37,12 @@ res = if STDIN.tty? # assume ARGV.first is a url
   STDERR.puts "charset: #{charset}"
   feed_xml = response.read
   feed_xml = to_utf feed_xml, charset, xml_encoding(feed_xml)
-  #feed_xml = tidy(feed_xml)
+
   FeedYamlizer.run feed_xml
 else
   feed_xml = STDIN.read
   feed_xml = to_utf feed_xml, nil, xml_encoding(feed_xml)
-  #feed_xml = tidy(feed_xml)
+
   FeedYamlizer.run feed_xml
 end
 

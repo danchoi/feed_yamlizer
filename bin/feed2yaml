@@ -8,18 +8,6 @@ rescue LoadError
 end
 require 'open-uri'
 
-def xml_encoding(rawxml)
-  x = rawxml.scan(/encoding=["']([^"']+)["']/)
-  encoding = x && x[0] && x[0][0]
-  STDERR.puts "xml encoding: #{encoding.inspect}"
-  encoding
-end
-
-def to_utf(x, http_charset, xml_charset)
-  original_charset = http_charset || xml_charset || "ISO-8859-1"
-  x = Iconv.conv("UTF-8//TRANSLIT//IGNORE", original_charset, x)
-end
-
 # for testing
 def print_text(res)
   res[:items].each {|x| 
@@ -30,24 +18,14 @@ def print_text(res)
   }
 end
 
-res = if STDIN.tty? # assume ARGV.first is a url
-  url = ARGV.first
-  response = open(url)
-  charset = response.charset
-  STDERR.puts "charset: #{charset}"
-  feed_xml = response.read
-  feed_xml = to_utf feed_xml, charset, xml_encoding(feed_xml)
-
-  FeedYamlizer.run feed_xml
-else
-  feed_xml = STDIN.read
-  feed_xml = to_utf feed_xml, nil, xml_encoding(feed_xml)
-
-  FeedYamlizer.run feed_xml
-end
+result = if STDIN.tty?
+           FeedYamlizer.process_url ARGV.first
+         else
+           FeedYamlizer.process_xml STDIN.read
+         end
 
 if ENV['TEST'] 
-  print_text res
+  print_text result
 else
-  puts res.to_yaml
+  puts result.to_yaml
 end

@@ -20,5 +20,4 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.add_dependency 'nokogiri'
   s.add_dependency 'htmlentities'
-  s.add_dependency 'sqlite3-ruby' # because htmlentities somehow requires this; a bug
 end

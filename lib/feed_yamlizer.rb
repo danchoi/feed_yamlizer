@@ -76,10 +76,6 @@ class FeedYamlizer
       encoding
     end
 
-    def to_utf(x, encoding = 'ISO-8859-1') 
-      x = Iconv.conv("UTF-8//TRANSLIT//IGNORE", encoding, x)
-    end
-
     def check_for_tidy
       if `which tidy` == ''
         abort "Please install tidy"
@@ -87,9 +83,9 @@ class FeedYamlizer
     end
 
     # main method
-    def run(feed_xml, encoding)
+    def run(feed_xml, encoding='UTF-8')
       check_for_tidy
-      feed_xml = to_utf feed_xml, encoding
+      feed_xml = Iconv.conv("UTF-8//TRANSLIT//IGNORE", encoding, feed_xml)
       parsed_data = FeedYamlizer::FeedParser.new(feed_xml).result
       result = FeedYamlizer.new(parsed_data).result
       result
@@ -104,7 +100,7 @@ class FeedYamlizer
       charset = response.charset
       #STDERR.puts "charset: #{charset}"
       xml = response.read
-      encoding = charset || xml_encoding(xml) || "ISO-8859-1"
+      encoding = charset || xml_encoding(xml) || "UTF-8"
       run xml, encoding
     end
   end

@@ -29,9 +29,13 @@ class FeedYamlizer
     @result
   end
 
+  def inner_text(string)
+    Nokogiri::HTML.parse(string).inner_text
+  end
+
   def add_feed_metaresult
     @result[:meta] = {
-      :title => Nokogiri::HTML.parse(@feed[:title]).inner_text,
+      :title => inner_text(@feed[:title]),
       :link => @feed[:link],
       :xml_encoding => @feed[:xml_encoding]
     }
@@ -46,7 +50,8 @@ class FeedYamlizer
 
   def add_item_metaresult(item, index)
     fields = [:title, :author, :guid, :pub_date, :link]
-    metaresult = fields.reduce({}) {|memo, field| 
+    x = {:title => inner_text(item[:title])}
+    metaresult = fields.reduce(x) {|memo, field| 
       memo[field] = item[field]
       memo
     }

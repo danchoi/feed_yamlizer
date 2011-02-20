@@ -30,10 +30,10 @@ class FeedYamlizer
   end
 
   def add_feed_metaresult
-    fields = [:title, :link, :xml_encoding]
-    @result[:meta] = fields.reduce({}) {|memo, field| 
-      memo[field] = @feed[field]
-      memo
+    @result[:meta] = {
+      :title => Nokogiri::HTML.parse(@feed[:title]).inner_text,
+      :link => @feed[:link],
+      :xml_encoding => @feed[:xml_encoding]
     }
   end
 

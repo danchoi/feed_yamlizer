@@ -56,7 +56,7 @@ class FeedYamlizer
         #@content << "<br/>"
         @content << ""
       when 'blockquote'
-        @content << "[blockquote]"
+        @content << "[blockquote]\n"
       when 'ul', 'ol', 'dl'
         @content << "<#{name}>"
       when 'li', 'dt', 'dd'

@@ -54,7 +54,8 @@ class FeedYamlizer
         @content << "<#{UNIFORM_HEADER_TAG}>" 
       when 'br' #skip
         #@content << "<br/>"
-        @content << ""
+        # @content << ""
+        @content[-1] += " " 
       when 'blockquote'
         @content << "[blockquote]\n"
       when 'ul', 'ol', 'dl'

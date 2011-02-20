@@ -49,7 +49,7 @@ class FeedYamlizer
         @in_link = true
       when 'img'
         text = attrs['alt'] || attrs['title']
-        chunk = ['img', "[#{text}] "].join(':')
+        chunk = "[IMG:#{text}]"
         @content[-1] << chunk
       when *HEADER_TAGS
         @content << "<#{UNIFORM_HEADER_TAG}>" 

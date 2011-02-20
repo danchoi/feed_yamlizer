@@ -70,8 +70,7 @@ class FeedYamlizer
 
   class << self
     def xml_encoding(rawxml)
-      x = rawxml.scan(/encoding=["']([^"']+)["']/)
-      encoding = x && x[0] && x[0][0]
+      encoding = rawxml[/encoding=["']([^"']+)["']/,1]
       STDERR.puts "xml encoding: #{encoding.inspect}"
       encoding
     end

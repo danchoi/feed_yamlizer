@@ -27,6 +27,31 @@ class FeedYamlizer
       # wrap the text
       x = format(x)
 
+      # delete extra blank lines
+      x = x.split(/\n\n+/).join("\n\n")
+
+      # format the blockquotes
+      line_buffer = []
+      blockquote_buffer = []
+      inblock = false
+      x.split(/\n/).each do |line|
+        if line == '[blockquote]'
+          inblock = true
+        elsif line == '[/blockquote]'
+          inblock = false
+          block = blockquote_buffer.join("\n")
+          line_buffer << format(block, '-c')
+          blockquote_buffer = []
+        else
+          if inblock 
+            blockquote_buffer << " " * 4 + line.to_s
+          else
+            line_buffer << line
+          end
+        end
+      end
+      x = line_buffer.join("\n")
+
       x + "\n\n" + @links.map {|x| 
         gutter = x[:index].to_s.rjust(digits)
         if x[:content] && x[:content].strip.length > 0
@@ -58,7 +83,7 @@ class FeedYamlizer
         # @content << ""
         @content[-1] += " " 
       when 'blockquote'
-        @content << "[blockquote]\n"
+        @content += ["[blockquote]", ""]
       when 'ul', 'ol', 'dl'
         @content << "<#{name}>"
       when 'li', 'dt', 'dd'
@@ -103,7 +128,6 @@ class FeedYamlizer
         return
       end
 
-      # probably slow, but ok for now
       @content[-1] << text
     end
 
@@ -115,8 +139,8 @@ class FeedYamlizer
       @nested_tags.join('/')
     end
 
-    def format(x)
-      IO.popen("fmt", "r+") do |pipe| 
+    def format(x, flags='')
+      IO.popen("fmt #{flags}", "r+") do |pipe| 
         pipe.puts x
         pipe.close_write
         pipe.read

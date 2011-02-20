@@ -14,6 +14,7 @@ require 'feed_yamlizer/textifier'
 require 'fileutils'
 require 'yaml'
 require 'htmlentities'
+require 'string_ext'
 
 class FeedYamlizer 
   include FileUtils::Verbose

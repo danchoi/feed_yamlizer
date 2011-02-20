@@ -8,7 +8,7 @@ rescue LoadError
 end
 require 'open-uri'
 
-# for testing
+# just prints the text, not yaml
 def print_text(res)
   res[:items].each {|x| 
     puts '-' * 30
@@ -18,13 +18,19 @@ def print_text(res)
   }
 end
 
+if ARGV.first == '-t' # text
+  puts "Printing text form"
+  @text = true
+  ARGV.shift
+end
+
 result = if STDIN.tty?
            FeedYamlizer.process_url ARGV.first
          else
            FeedYamlizer.process_xml STDIN.read
          end
 
-if ENV['TEST'] 
+if @text
   print_text result
 else
   puts result.to_yaml

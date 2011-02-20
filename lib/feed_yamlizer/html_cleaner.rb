@@ -43,7 +43,7 @@ class FeedYamlizer
       #output = IO.popen("tidy -q -n -wrap 120 -asxml -latin1", "r+") do |pipe|
       #output = IO.popen("tidy -q -wrap 120 -raw -asxml ", "r+") do |pipe| # if from latin1
 
-      tidy = "tidy -q -wrap 120 -n -utf8 -asxml 2>/dev/null"
+      tidy = "tidy -q -wrap 120 -n -raw -utf8 -asxml 2>/dev/null"
       output = IO.popen(tidy, "r+") do |pipe| 
         input = <<-END
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

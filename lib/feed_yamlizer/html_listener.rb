@@ -24,6 +24,7 @@ class FeedYamlizer
 
       digits = @links.size.to_s.size 
 
+      # wrap the text
       x = format(x)
 
       x + "\n\n" + @links.map {|x| 
@@ -48,7 +49,7 @@ class FeedYamlizer
         @in_link = true
       when 'img'
         text = attrs['alt'] || attrs['title']
-        chunk = ['img', text].join(':')
+        chunk = ['img', "[#{text}] "].join(':')
         @content[-1] << chunk
       when *HEADER_TAGS
         @content << "<#{UNIFORM_HEADER_TAG}>" 

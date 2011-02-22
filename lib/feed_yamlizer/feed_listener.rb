@@ -14,7 +14,7 @@ class FeedYamlizer
     
     ITEM_GUID_TAGS = %w[ feed/entry/id rss/channel/item/guid rdf:RDF/item/guid ]
     
-    ITEM_PUB_DATE_TAGS = %w[ feed/entry/published feed/entry/created feed/entry/modified rss/channel/item/pubDate rdf:RDF/item/dc:date ]
+    ITEM_PUB_DATE_TAGS = %w[ feed/entry/published feed/entry/created feed/entry/modified feed/entry/updated rss/channel/item/pubDate rdf:RDF/item/dc:date ]
     
     ITEM_LINK_TAGS = %w[ rss/channel/item/link rdf:RDF/item/link ] 
     

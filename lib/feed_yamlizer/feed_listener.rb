@@ -26,23 +26,26 @@ class FeedYamlizer
       @x = {:items => []}
     end
 
-    def result; @x; end
+    def result
+      @x
+    end
 
     def tag_start(name, attrs)
       @nested_tags.push name
       case path
       when 'feed/link'
-        @x[:link] = encode attrs['href']
+        @x[:link] ||= encode attrs['href']
       when *ITEM_START_TAGS
         @current_item = {}
       when 'feed/entry/link'
-        @current_item[:link] = encode attrs['href']
+        (@current_item[:links] ||= []) << encode(attrs['href'])
       end
     end
 
     def tag_end(name)
       case path
       when *ITEM_START_TAGS
+        @current_item[:link] ||= @current_item[:links].detect {|x| x !~ /\.(jpg|png|gif)$/}
         @x[:items] << @current_item
         @current_item = nil
       end
@@ -54,7 +57,7 @@ class FeedYamlizer
       when *FEED_TITLE_TAGS
         @x[:title] = encode text.strip
       when *FEED_LINK_TAGS 
-        @x[:link] = encode text.strip
+        @x[:link] ||= encode text.strip
       when *ITEM_TITLE_TAGS 
         @current_item[:title] = encode(text.strip)
       when *ITEM_AUTHOR_TAGS 
@@ -64,7 +67,8 @@ class FeedYamlizer
       when *ITEM_PUB_DATE_TAGS
         @current_item[:pub_date] = DateTime.parse(encode(text))
       when *ITEM_LINK_TAGS 
-        @current_item[:link] = encode(text)
+        @current_item[:link] ||= encode(text)
+        (@current_item[:links] ||= []) << encode(text)
       when *ITEM_SUMMARY_TAGS 
         if @current_item[:summary] 
           @current_item[:summary] << encode(text)

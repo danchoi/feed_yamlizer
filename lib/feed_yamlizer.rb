@@ -10,7 +10,6 @@ require 'feed_yamlizer/feed_parser'
 require 'feed_yamlizer/html_listener'
 require 'feed_yamlizer/html_cleaner'
 require 'nokogiri'
-require 'feed_yamlizer/textifier'
 require 'fileutils'
 require 'yaml'
 require 'htmlentities'
@@ -18,6 +17,13 @@ require 'string_ext'
 
 class FeedYamlizer 
   include FileUtils::Verbose
+  def self.format(x, flags='')
+    IO.popen("fmt #{flags}", "r+") do |pipe| 
+      pipe.puts x
+      pipe.close_write
+      pipe.read
+    end
+  end
 
   def initialize(feed)
     @feed = feed
@@ -64,14 +70,15 @@ class FeedYamlizer
     @result[:items][-1][:content] = {:html => content}
     # TODO check if HTML or plain text!
     simplified = HtmlCleaner.new(content).output
-    textified = Textifier.new(simplified).output 
     #@result[:items][-1][:content][:simplified] = simplified
-    textified = textified.gsub(FeedYamlizer::NEWLINE_PLACEHOLDER, "\n").
+    textified = simplified.gsub(FeedYamlizer::NEWLINE_PLACEHOLDER, "\n").
         gsub(SPACE_PLACEHOLDER, " ").
         gsub(TAB_PLACEHOLDER, "  ").
         gsub(/^\s+$/, "").
-        # eliminate extra blank lines
-        gsub(/\n{3,}/, "\n\n")
+        # eliminate extra blank lines 
+        #gsub(/\n{3,}(?!\s)/, "awdkljalwkdjalwkjd lawkdj GOLD klajw d\n\n")
+        #gsub(/\n{3,}(?!\s)/m, "\n\n").
+        gsub(/\n *\n *\n *$/ , "\n\n")
     # next two lines are dev lines
     #puts textified
     #exit

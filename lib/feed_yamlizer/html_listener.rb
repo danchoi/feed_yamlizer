@@ -28,11 +28,9 @@ class FeedYamlizer
 
       digits = @links.size.to_s.size 
 
+      x = Nokogiri::HTML.parse(x).inner_text
       # wrap the text
-      x = format(x)
-
-      # delete extra blank lines
-      x = x.split(/\n\n+/).join("\n\n")
+      x = FeedYamlizer.format(x)
 
       # format the blockquotes
       line_buffer = []
@@ -44,7 +42,7 @@ class FeedYamlizer
         elsif line == '[/blockquote]'
           inblock = false
           block = blockquote_buffer.join("\n")
-          line_buffer << format(block, '-c')
+          line_buffer << ( FeedYamlizer.format(block, '-c') )
           blockquote_buffer = []
         else
           if inblock 
@@ -55,8 +53,9 @@ class FeedYamlizer
         end
       end
       x = line_buffer.join("\n")
+      
 
-      x + "\n\n" + @links.map {|x| 
+      res = x + "\n\n" + @links.map {|x| 
         gutter = x[:index].to_s.rjust(digits)
         if x[:content] && x[:content].strip.length > 0
           %Q|#{gutter}. "#{x[:content].gsub(/[\r\n]+/, ' ').strip}"\n#{' ' * (digits + 2)}#{x[:href]}|
@@ -64,6 +63,7 @@ class FeedYamlizer
           "#{gutter}. #{x[:href]}"
         end
       }.join("\n")
+      res 
     end
 
     def strip_empty_tags(line)
@@ -91,7 +91,7 @@ class FeedYamlizer
       when 'ul', 'ol', 'dl'
         @content << "<#{name}>\n"
       when 'li', 'dt', 'dd'
-        @content[-1] << "\n  * "
+        @content += ["[blockquote]", "", "* "]
       when 'strong', 'em'
         @content[-1] << "<#{name}>"
       when *BLOCK_TAGS
@@ -112,11 +112,11 @@ class FeedYamlizer
       when *HEADER_TAGS
         @content[-1] << "</#{UNIFORM_HEADER_TAG}>" 
       when 'blockquote'
-        @content << '[/blockquote]'
+        @content += ["","[/blockquote]"]
       when 'ul', 'ol', 'dl'
         @content[-1] << "</#{name}>"
       when 'li', 'dt', 'dd'
-        @content[-1] << "\n"
+        @content += ["", "[/blockquote]"]
       when 'strong', 'em'
         @content[-1] << "</#{name}>"
       when *BLOCK_TAGS
@@ -149,13 +149,6 @@ class FeedYamlizer
       @nested_tags.join('/')
     end
 
-    def format(x, flags='')
-      IO.popen("fmt #{flags}", "r+") do |pipe| 
-        pipe.puts x
-        pipe.close_write
-        pipe.read
-      end
-    end
 
   end
 end

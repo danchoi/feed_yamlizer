@@ -68,7 +68,10 @@ class FeedYamlizer
     #@result[:items][-1][:content][:simplified] = simplified
     textified = textified.gsub(FeedYamlizer::NEWLINE_PLACEHOLDER, "\n").
         gsub(SPACE_PLACEHOLDER, " ").
-        gsub(TAB_PLACEHOLDER, "  ")
+        gsub(TAB_PLACEHOLDER, "  ").
+        gsub(/^\s+$/, "").
+        # eliminate extra blank lines
+        gsub(/\n{3,}/, "\n\n")
     # next two lines are dev lines
     #puts textified
     #exit

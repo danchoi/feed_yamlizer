@@ -66,6 +66,12 @@ class FeedYamlizer
     simplified = HtmlCleaner.new(content).output
     textified = Textifier.new(simplified).output 
     #@result[:items][-1][:content][:simplified] = simplified
+    textified = textified.gsub(FeedYamlizer::NEWLINE_PLACEHOLDER, "\n").
+        gsub(SPACE_PLACEHOLDER, " ").
+        gsub(TAB_PLACEHOLDER, "  ")
+    # next two lines are dev lines
+    #puts textified
+    #exit
     @result[:items][-1][:content][:text] = textified
   end
 

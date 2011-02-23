@@ -1,4 +1,8 @@
 class FeedYamlizer
+  NEWLINE_PLACEHOLDER = '+---NEWLINE---+'
+  SPACE_PLACEHOLDER = '+---SPACE---+'
+  TAB_PLACEHOLDER = '+---TAB---+'
+
   class HtmlListener
     include REXML::StreamListener
 
@@ -85,15 +89,16 @@ class FeedYamlizer
       when 'blockquote'
         @content += ["[blockquote]", ""]
       when 'ul', 'ol', 'dl'
-        @content << "<#{name}>"
+        @content << "<#{name}>\n"
       when 'li', 'dt', 'dd'
-        @content[-1] << "  <#{name}>"
+        @content[-1] << "\n  * "
       when 'strong', 'em'
         @content[-1] << "<#{name}>"
       when *BLOCK_TAGS
         @content << "<p>"
       when 'pre'
-        @content << "<pre>"
+        @pre = true
+        @content << "[pre]\n"
       end
     end
 
@@ -111,13 +116,14 @@ class FeedYamlizer
       when 'ul', 'ol', 'dl'
         @content[-1] << "</#{name}>"
       when 'li', 'dt', 'dd'
-        @content[-1] << "  </#{name}>"
+        @content[-1] << "\n"
       when 'strong', 'em'
         @content[-1] << "</#{name}>"
       when *BLOCK_TAGS
         @content[-1] << "</p>"
       when 'pre'
-        @content[-1] << "</pre>"
+        @pre = false
+        @content[-1] << "\n[/pre]"
       end
     end
 
@@ -128,7 +134,11 @@ class FeedYamlizer
         return
       end
 
-      @content[-1] << text
+      if @pre 
+        @content[-1] << text.gsub("\n", NEWLINE_PLACEHOLDER).gsub(/\t/, TAB_PLACEHOLDER).gsub(" ", SPACE_PLACEHOLDER)
+      else
+        @content[-1] << text
+      end
     end
 
     def start_of_block?

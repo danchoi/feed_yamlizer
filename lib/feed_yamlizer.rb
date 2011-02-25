@@ -17,11 +17,17 @@ require 'string_ext'
 
 class FeedYamlizer 
   include FileUtils::Verbose
-  def self.format(x, flags='')
-    IO.popen("fmt #{flags}", "r+") do |pipe| 
+
+  def self.format(x, indent=0)
+    res = IO.popen("fmt -w #{75 - indent}", "r+") do |pipe| 
       pipe.puts x
       pipe.close_write
       pipe.read
+    end
+    if indent
+      res.gsub(/^(?=\S)/, ' ' * indent)
+    else 
+      res
     end
   end
 

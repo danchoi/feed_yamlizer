@@ -42,7 +42,7 @@ class FeedYamlizer
         elsif line == '[/blockquote]'
           inblock = false
           block = blockquote_buffer.join("\n")
-          line_buffer << ( FeedYamlizer.format(block, '-c') )
+          line_buffer << (FeedYamlizer.format(block, 4))
           blockquote_buffer = []
         else
           if inblock 

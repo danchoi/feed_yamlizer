@@ -112,11 +112,11 @@ class FeedYamlizer
       when *HEADER_TAGS
         @content[-1] << "</#{UNIFORM_HEADER_TAG}>" 
       when 'blockquote'
-        @content += ["","[/blockquote]"]
+        @content += ["","[/blockquote]", '']
       when 'ul', 'ol', 'dl'
         @content[-1] << "</#{name}>"
       when 'li', 'dt', 'dd'
-        @content += ["", "[/blockquote]"]
+        @content += ["", "[/blockquote]", '']
       when 'strong', 'em'
         @content[-1] << "</#{name}>"
       when *BLOCK_TAGS

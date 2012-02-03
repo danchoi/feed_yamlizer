@@ -93,7 +93,7 @@ class FeedYamlizer
 
   class << self
     def xml_encoding(rawxml)
-      encoding = rawxml[/encoding=["']([^"']+)["']/,1]
+      encoding = rawxml.encode("ascii", invalid: :replace, undef: :replace)[/encoding=["']([^"']+)["']/,1]
       STDERR.puts "xml encoding: #{encoding.inspect}"
       encoding
     end

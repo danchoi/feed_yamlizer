@@ -4,6 +4,7 @@ class FeedYamlizer
 
     FEED_TITLE_TAGS = %w[ feed/title rss/channel/title rdf:RDF/channel/title ]
     
+    # not really necessary
     FEED_LINK_TAGS = %w[ rss/channel/link rdf:RDF/channel/link ]
     
     ITEM_START_TAGS = %w[ feed/entry rss/channel/item rdf:RDF/item ] 
@@ -16,7 +17,7 @@ class FeedYamlizer
     
     ITEM_PUB_DATE_TAGS = %w[ feed/entry/published feed/entry/created feed/entry/modified feed/entry/updated rss/channel/item/pubDate rdf:RDF/item/dc:date ]
     
-    ITEM_LINK_TAGS = %w[ rss/channel/item/link rdf:RDF/item/link ] 
+    ITEM_LINK_TAGS = %w[ feed/entry/feedburner:origLink rss/channel/item/link rdf:RDF/item/link ] 
     
     ITEM_SUMMARY_TAGS = %w[ feed/entry/summary rss/channel/item/description rdf:RDF/item/description ] 
     ITEM_CONTENT_TAGS = [ %r{feed/entry/content}, %r{rss/channel/item/content}, %r{rss/channel/item/content:encoded},  %r{rss/item/content}, %r{rdf:RDF/item/content} ]

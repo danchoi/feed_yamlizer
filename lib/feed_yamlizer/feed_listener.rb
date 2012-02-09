@@ -39,7 +39,9 @@ class FeedYamlizer
       when *ITEM_START_TAGS
         @current_item = {}
       when 'feed/entry/link'
-        (@current_item[:links] ||= []) << encode(attrs['href'])
+        if (attrs['rel'] != 'replies') && (attrs['rel'] == 'alternate' || attrs['type'] == 'text/html')
+          (@current_item[:links] ||= []) << encode(attrs['href'])
+        end
       end
     end
 

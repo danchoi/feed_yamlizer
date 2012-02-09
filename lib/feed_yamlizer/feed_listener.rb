@@ -48,7 +48,7 @@ class FeedYamlizer
     def tag_end(name)
       case path
       when *ITEM_START_TAGS
-        @current_item[:link] ||= @current_item[:links].detect {|x| x !~ /\.(jpg|png|gif)$/}
+        @current_item[:link] ||= (@current_item[:links] || []).detect {|x| x !~ /\.(jpg|png|gif)$/}
         @x[:items] << @current_item
         @current_item = nil
       end

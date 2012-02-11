@@ -66,7 +66,7 @@ class FeedYamlizer
   end
 
   def add_item_metaresult(item, index)
-    fields = [:title, :author, :guid, :pub_date, :link, :enclosure]
+    fields = [:title, :author, :guid, :pub_date, :link, :enclosure, :podcast_image]
     x = {:title => inner_text(item[:title])}
     metaresult = fields.reduce(x) {|memo, field| 
       memo[field] = item[field]

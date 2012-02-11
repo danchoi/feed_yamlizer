@@ -45,6 +45,10 @@ class FeedYamlizer
         end
       when /enclosure$/
         @current_item[:enclosure] ||= encode(attrs['url'])
+      when /itunes:image$/
+        if @current_item
+          @current_item[:podcast_image] ||= encode(attrs['href'])
+        end
       end
     end
 

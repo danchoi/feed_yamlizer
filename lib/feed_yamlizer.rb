@@ -15,6 +15,10 @@ require 'yaml'
 require 'htmlentities'
 require 'string_ext'
 
+if ENV['FEED2YAML_ENV'] == 'debug'
+  $debug = true
+end
+
 class FeedYamlizer 
   include FileUtils::Verbose
 
@@ -62,7 +66,7 @@ class FeedYamlizer
   end
 
   def add_item_metaresult(item, index)
-    fields = [:title, :author, :guid, :pub_date, :link]
+    fields = [:title, :author, :guid, :pub_date, :link, :enclosure]
     x = {:title => inner_text(item[:title])}
     metaresult = fields.reduce(x) {|memo, field| 
       memo[field] = item[field]
@@ -94,7 +98,9 @@ class FeedYamlizer
   class << self
     def xml_encoding(rawxml)
       encoding = rawxml.encode("ascii", invalid: :replace, undef: :replace)[/encoding=["']([^"']+)["']/,1]
-      STDERR.puts "xml encoding: #{encoding.inspect}"
+      if $debug
+        STDERR.puts "xml encoding: #{encoding.inspect}"
+      end
       encoding
     end
 

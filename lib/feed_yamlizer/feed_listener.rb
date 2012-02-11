@@ -22,6 +22,7 @@ class FeedYamlizer
     ITEM_SUMMARY_TAGS = %w[ feed/entry/summary rss/channel/item/description rdf:RDF/item/description ] 
     ITEM_CONTENT_TAGS = [ %r{feed/entry/content}, %r{rss/channel/item/content}, %r{rss/channel/item/content:encoded},  %r{rss/item/content}, %r{rdf:RDF/item/content} ]
 
+
     def initialize
       @nested_tags = []
       @x = {:items => []}
@@ -42,6 +43,8 @@ class FeedYamlizer
         if (attrs['rel'] != 'replies') && (attrs['rel'] == 'alternate' || attrs['type'] == 'text/html')
           (@current_item[:links] ||= []) << encode(attrs['href'])
         end
+      when /enclosure$/
+        @current_item[:enclosure] ||= encode(attrs['url'])
       end
     end
 
